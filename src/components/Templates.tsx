@@ -77,7 +77,7 @@ const templates = [
 
 const Templates = () => {
   return (
-    <section className="py-24 px-6 bg-background relative overflow-hidden">
+    <section id="templates" className="py-24 px-6 bg-background relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-10 right-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />

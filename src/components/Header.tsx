@@ -50,7 +50,11 @@ const Header = () => {
               <User className="w-4 h-4 mr-2" />
               Sign In
             </Button>
-            <Button variant="premium" size="sm">
+            <Button 
+              variant="premium" 
+              size="sm"
+              onClick={() => window.location.href = '/builder'}
+            >
               Get Started
             </Button>
           </div>
@@ -87,7 +91,11 @@ const Header = () => {
                   <User className="w-4 h-4 mr-2" />
                   Sign In
                 </Button>
-                <Button variant="premium" size="sm">
+                <Button 
+                  variant="premium" 
+                  size="sm"
+                  onClick={() => window.location.href = '/builder'}
+                >
                   Get Started
                 </Button>
               </div>

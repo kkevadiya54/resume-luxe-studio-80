@@ -66,7 +66,7 @@ const stats = [
 
 const Features = () => {
   return (
-    <section className="py-24 px-6 bg-background relative overflow-hidden">
+    <section id="features" className="py-24 px-6 bg-background relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-glow" />
