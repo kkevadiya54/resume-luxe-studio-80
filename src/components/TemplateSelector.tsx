@@ -3,7 +3,11 @@ import { useResume } from '@/contexts/ResumeContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Palette } from 'lucide-react';
+import { Check, Palette, Crown } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
+import template1 from '@/assets/template-1.jpg';
+import template2 from '@/assets/template-2.jpg';
+import template3 from '@/assets/template-3.jpg';
 
 interface Template {
   id: string;
@@ -18,26 +22,40 @@ const templates: Template[] = [
     id: '1',
     name: 'Professional Classic',
     description: 'Clean, traditional layout perfect for corporate roles',
-    preview: '/api/placeholder/300/400',
+    preview: template1,
   },
   {
     id: '2', 
     name: 'Modern Minimal',
     description: 'Sleek design with subtle colors for creative industries',
-    preview: '/api/placeholder/300/400',
+    preview: template2,
   },
   {
     id: '3',
     name: 'Executive Elite',
     description: 'Sophisticated layout for senior-level positions',
-    preview: '/api/placeholder/300/400',
+    preview: template3,
     isPremium: true,
   },
   {
     id: '4',
     name: 'Creative Pro',
     description: 'Bold design showcasing creativity and innovation',
-    preview: '/api/placeholder/300/400',
+    preview: template1,
+    isPremium: true,
+  },
+  {
+    id: '5',
+    name: 'Tech Innovator',
+    description: 'Modern template designed for tech professionals',
+    preview: template2,
+    isPremium: false,
+  },
+  {
+    id: '6',
+    name: 'Designer Focus',
+    description: 'Creative layout showcasing design skills',
+    preview: template3,
     isPremium: true,
   },
 ];
@@ -47,8 +65,21 @@ export const TemplateSelector: React.FC = () => {
   
   if (!state.currentResume) return null;
 
-  const handleSelectTemplate = (templateId: string) => {
+  const handleSelectTemplate = (templateId: string, isPremium: boolean = false) => {
+    if (isPremium) {
+      toast({
+        title: "Premium Template",
+        description: "This template requires a Pro subscription. Upgrade to unlock all premium features.",
+        variant: "default",
+      });
+      return;
+    }
+    
     dispatch({ type: 'SET_TEMPLATE', payload: templateId });
+    toast({
+      title: "Template Applied",
+      description: `Successfully applied ${templates.find(t => t.id === templateId)?.name} template.`,
+    });
   };
 
   return (
@@ -69,24 +100,20 @@ export const TemplateSelector: React.FC = () => {
                     ? 'ring-2 ring-primary border-primary' 
                     : 'border-white/10 hover:border-white/20'
                 }`}
-                onClick={() => handleSelectTemplate(template.id)}
+                onClick={() => handleSelectTemplate(template.id, template.isPremium)}
               >
                 {/* Preview Image */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-muted/20 to-muted/40 rounded-t-lg flex items-center justify-center relative overflow-hidden">
-                  <div className="text-center p-4">
-                    <div className="w-full h-4 bg-primary/20 rounded mb-2" />
-                    <div className="w-3/4 h-2 bg-muted rounded mb-2" />
-                    <div className="w-full h-2 bg-muted rounded mb-4" />
-                    <div className="space-y-2">
-                      <div className="w-full h-1 bg-muted/60 rounded" />
-                      <div className="w-5/6 h-1 bg-muted/60 rounded" />
-                      <div className="w-4/5 h-1 bg-muted/60 rounded" />
-                    </div>
-                  </div>
+                  <img 
+                    src={template.preview} 
+                    alt={`${template.name} template preview`}
+                    className="w-full h-full object-cover"
+                  />
                   
                   {/* Premium Badge */}
                   {template.isPremium && (
                     <Badge className="absolute top-2 right-2 bg-gradient-primary text-white">
+                      <Crown className="w-3 h-3 mr-1" />
                       Premium
                     </Badge>
                   )}

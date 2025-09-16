@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useResume } from '@/contexts/ResumeContext';
 import { PersonalInfoForm } from '@/components/forms/PersonalInfoForm';
 import { ExperienceForm } from '@/components/forms/ExperienceForm';
 import { EducationForm } from '@/components/forms/EducationForm';
 import { SkillsForm } from '@/components/forms/SkillsForm';
 import { ResumePreview } from '@/components/ResumePreview';
+import { CanvaEditor } from '@/components/CanvaEditor';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,21 +19,31 @@ import {
   GraduationCap, 
   Award,
   ArrowLeft,
-  FileText
+  FileText,
+  Edit3,
+  Palette
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { TemplateSelector } from '@/components/TemplateSelector';
 import { toast } from '@/hooks/use-toast';
 
 const ResumeBuilder = () => {
   const { state, dispatch, saveResume } = useResume();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [showCanvaEditor, setShowCanvaEditor] = useState(false);
 
   useEffect(() => {
     if (!state.currentResume) {
       dispatch({ type: 'CREATE_NEW_RESUME' });
     }
-  }, [state.currentResume, dispatch]);
+    
+    // Handle template selection from URL
+    const templateId = searchParams.get('template');
+    if (templateId && state.currentResume) {
+      dispatch({ type: 'SET_TEMPLATE', payload: templateId });
+    }
+  }, [state.currentResume, dispatch, searchParams]);
 
   const handleSave = () => {
     saveResume();
@@ -50,6 +61,10 @@ const ResumeBuilder = () => {
       exportResumePDF(state.currentResume!);
     });
   };
+
+  if (showCanvaEditor) {
+    return <CanvaEditor onClose={() => setShowCanvaEditor(false)} />;
+  }
 
   if (!state.currentResume) {
     return (
@@ -100,6 +115,14 @@ const ResumeBuilder = () => {
                 }}
               >
                 Load Sample
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setShowCanvaEditor(true)}
+              >
+                <Edit3 className="w-4 h-4 mr-2" />
+                Canva Editor
               </Button>
               <Button variant="outline" size="sm" onClick={handleSave}>
                 <Save className="w-4 h-4 mr-2" />

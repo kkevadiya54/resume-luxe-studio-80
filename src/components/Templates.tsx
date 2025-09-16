@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye, Star, Crown, Briefcase, Palette } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import template1 from "@/assets/template-1.jpg";
 import template2 from "@/assets/template-2.jpg";
 import template3 from "@/assets/template-3.jpg";
@@ -76,6 +77,12 @@ const templates = [
 ];
 
 const Templates = () => {
+  const navigate = useNavigate();
+
+  const handleUseTemplate = (templateId: number) => {
+    navigate(`/builder?template=${templateId}`);
+  };
+
   return (
     <section id="templates" className="py-24 px-6 bg-background relative overflow-hidden">
       {/* Background Elements */}
@@ -132,10 +139,19 @@ const Templates = () => {
 
                      {/* Hover Overlay */}
                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                       <Button variant="glass" size="lg" className="transform scale-90 group-hover:scale-100 transition-transform duration-300">
-                         <Eye className="w-5 h-5 mr-2" />
-                         Preview
-                       </Button>
+                       <div className="flex space-x-2">
+                         <Button variant="glass" size="sm">
+                           <Eye className="w-4 h-4 mr-2" />
+                           Preview
+                         </Button>
+                         <Button 
+                           variant="glass" 
+                           size="sm"
+                           onClick={() => handleUseTemplate(template.id)}
+                         >
+                           Use Template
+                         </Button>
+                       </div>
                      </div>
                   </div>
 
@@ -157,6 +173,7 @@ const Templates = () => {
                     <Button 
                       variant={template.isPremium ? "premium" : "default"} 
                       className="w-full"
+                      onClick={() => handleUseTemplate(template.id)}
                     >
                       {template.isPremium ? "Use Premium" : "Use Template"}
                     </Button>
@@ -169,7 +186,12 @@ const Templates = () => {
 
         {/* View All Templates Button */}
         <div className="text-center animate-fade-in">
-          <Button variant="hero" size="lg" className="px-12 py-4 text-lg">
+          <Button 
+            variant="hero" 
+            size="lg" 
+            className="px-12 py-4 text-lg"
+            onClick={() => navigate('/builder')}
+          >
             View All Templates
             <Crown className="w-5 h-5 ml-2" />
           </Button>
