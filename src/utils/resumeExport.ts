@@ -216,28 +216,72 @@ export const downloadResumeHTML = (resume: Resume) => {
   URL.revokeObjectURL(url);
 };
 
-// Future: PDF export using libraries like jsPDF or Puppeteer
+// PDF export using html2pdf.js
 export const exportResumePDF = async (resume: Resume) => {
-  // This would implement PDF generation
-  // For now, we'll use the HTML export and suggest printing to PDF
-  downloadResumeHTML(resume);
-  
-  // Show instructions for PDF conversion
-  const instructions = `
-Your resume has been exported as HTML. To convert to PDF:
-
+  try {
+    // Dynamic import to avoid SSR issues
+    const html2pdf = (await import('html2pdf.js')).default;
+    
+    // Generate HTML content for PDF
+    const htmlContent = exportResumeAsHTML(resume);
+    
+    // Create a temporary element to hold the content
+    const element = document.createElement('div');
+    element.innerHTML = htmlContent;
+    element.style.width = '210mm'; // A4 width
+    element.style.minHeight = '297mm'; // A4 height
+    element.style.padding = '20mm';
+    element.style.boxSizing = 'border-box';
+    element.style.fontFamily = 'Arial, sans-serif';
+    element.style.fontSize = '12px';
+    element.style.lineHeight = '1.4';
+    element.style.color = '#333';
+    element.style.backgroundColor = '#fff';
+    
+    // Temporarily add to DOM (hidden)
+    element.style.position = 'absolute';
+    element.style.left = '-9999px';
+    element.style.top = '-9999px';
+    document.body.appendChild(element);
+    
+    // Configure PDF options
+    const options = {
+      margin: [0.5, 0.5, 0.5, 0.5], // inches
+      filename: `${resume.personalInfo.fullName.replace(/\s+/g, '_')}_Resume.pdf`,
+      image: { type: 'jpeg' as const, quality: 0.95 },
+      html2canvas: { 
+        scale: 2,
+        useCORS: true,
+        letterRendering: true,
+        allowTaint: true
+      },
+      jsPDF: { 
+        unit: 'in' as const, 
+        format: 'a4', 
+        orientation: 'portrait' as const,
+        compress: true
+      }
+    };
+    
+    // Generate and download PDF
+    await html2pdf().set(options).from(element).save();
+    
+    // Clean up
+    document.body.removeChild(element);
+    
+  } catch (error) {
+    console.error('PDF export failed:', error);
+    
+    // Fallback to HTML export with instructions
+    downloadResumeHTML(resume);
+    
+    alert(`PDF export failed. Your resume has been exported as HTML instead. 
+    
+To convert to PDF:
 1. Open the downloaded HTML file in your browser
-2. Press Ctrl+P (or Cmd+P on Mac) to print
-3. Select "Save as PDF" as the destination
-4. Adjust margins if needed and save
-
-For best results:
-• Use Chrome or Edge browser
-• Set margins to "None" or "Minimum"
-• Enable "Background graphics" in print options
-  `;
-  
-  alert(instructions);
+2. Press Ctrl+P (or Cmd+P on Mac) to print  
+3. Select "Save as PDF" as the destination`);
+  }
 };
 
 export const shareResumeLink = (resume: Resume): string => {

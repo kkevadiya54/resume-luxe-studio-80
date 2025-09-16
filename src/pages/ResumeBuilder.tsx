@@ -21,6 +21,7 @@ import {
   FileText
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { TemplateSelector } from '@/components/TemplateSelector';
 import { toast } from '@/hooks/use-toast';
 
 const ResumeBuilder = () => {
@@ -85,6 +86,21 @@ const ResumeBuilder = () => {
             </div>
             
             <div className="flex items-center space-x-4">
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                onClick={() => {
+                  import('@/utils/sampleData').then(({ sampleResume }) => {
+                    dispatch({ type: 'SET_RESUME', payload: sampleResume });
+                    toast({
+                      title: "Sample Data Loaded",
+                      description: "Resume filled with example data to help you get started.",
+                    });
+                  });
+                }}
+              >
+                Load Sample
+              </Button>
               <Button variant="outline" size="sm" onClick={handleSave}>
                 <Save className="w-4 h-4 mr-2" />
                 Save
@@ -111,22 +127,26 @@ const ResumeBuilder = () => {
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="personal" className="w-full">
-                  <TabsList className="grid w-full grid-cols-4 mb-6">
-                    <TabsTrigger value="personal" className="flex items-center">
-                      <User className="w-4 h-4 mr-2" />
+                  <TabsList className="grid w-full grid-cols-5 mb-6">
+                    <TabsTrigger value="personal" className="flex items-center text-xs">
+                      <User className="w-4 h-4 mr-1" />
                       Personal
                     </TabsTrigger>
-                    <TabsTrigger value="experience" className="flex items-center">
-                      <Briefcase className="w-4 h-4 mr-2" />
+                    <TabsTrigger value="experience" className="flex items-center text-xs">
+                      <Briefcase className="w-4 h-4 mr-1" />
                       Experience
                     </TabsTrigger>
-                    <TabsTrigger value="education" className="flex items-center">
-                      <GraduationCap className="w-4 h-4 mr-2" />
+                    <TabsTrigger value="education" className="flex items-center text-xs">
+                      <GraduationCap className="w-4 h-4 mr-1" />
                       Education
                     </TabsTrigger>
-                    <TabsTrigger value="skills" className="flex items-center">
-                      <Award className="w-4 h-4 mr-2" />
+                    <TabsTrigger value="skills" className="flex items-center text-xs">
+                      <Award className="w-4 h-4 mr-1" />
                       Skills
+                    </TabsTrigger>
+                    <TabsTrigger value="template" className="flex items-center text-xs">
+                      <Eye className="w-4 h-4 mr-1" />
+                      Template
                     </TabsTrigger>
                   </TabsList>
                   
@@ -142,6 +162,9 @@ const ResumeBuilder = () => {
                     </TabsContent>
                     <TabsContent value="skills">
                       <SkillsForm />
+                    </TabsContent>
+                    <TabsContent value="template">
+                      <TemplateSelector />
                     </TabsContent>
                   </div>
                 </Tabs>
